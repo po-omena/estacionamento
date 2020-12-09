@@ -1,5 +1,6 @@
 package com.alura.estacionamento.estrutura;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -21,9 +22,9 @@ public class Carro {
 	@NotNull
 	private String placa;
 	private String marca;
-	@OneToOne
+	@OneToOne(cascade = {CascadeType.ALL})
 	private Modelo modelo;
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.ALL})
 	private Cliente cliente;
 
 	public Carro() {

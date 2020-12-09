@@ -42,6 +42,9 @@ public class TicketController {
 		ticketRepository.save(ticket);
 		
 		URI uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
+		System.out.println("Os valores para nosso espaço são:");
+		System.out.println("Valor para 1ª Hora ---> R$ 5,00");
+		System.out.println("Valor para 2ª Hora ---> R$ 2,00");
 		return ResponseEntity.created(uri).body(new Ticket(ticket));
 	}
 }

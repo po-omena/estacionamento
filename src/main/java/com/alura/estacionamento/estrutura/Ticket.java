@@ -3,6 +3,7 @@ package com.alura.estacionamento.estrutura;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,7 +24,7 @@ public class Ticket {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long Id;
 	@NotNull
-	@ManyToOne
+	@ManyToOne(cascade = {CascadeType.ALL})
 	private Carro carro;
 	private BigDecimal valor;
 	@NotNull
@@ -95,4 +96,7 @@ public class Ticket {
 		this.status = status;
 	}
 
+	public BigDecimal checaValor() {
+		return BigDecimal.valueOf(1);
+	}
 }

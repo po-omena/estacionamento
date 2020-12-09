@@ -12,10 +12,9 @@ public class TicketForm {
 	public TicketForm() {
 	}
 
-	public TicketForm(Carro carro, Cliente cliente) {
+	public TicketForm(Carro carro) {
 		super();
 		this.carro = carro;
-		this.cliente = cliente;
 	}
 
 	public Carro getCarro() {
