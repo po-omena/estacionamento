@@ -9,6 +9,15 @@ public class TicketForm {
 	private Carro carro;
 	private Cliente cliente;
 
+	public TicketForm() {
+	}
+
+	public TicketForm(Carro carro, Cliente cliente) {
+		super();
+		this.carro = carro;
+		this.cliente = cliente;
+	}
+
 	public Carro getCarro() {
 		return carro;
 	}
@@ -26,7 +35,7 @@ public class TicketForm {
 	}
 
 	public Ticket converter() {
-		return new Ticket(cliente, carro);
+		return new Ticket(carro);
 	}
 
 }

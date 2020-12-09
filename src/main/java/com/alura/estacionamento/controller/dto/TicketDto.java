@@ -5,20 +5,17 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.alura.estacionamento.estrutura.Carro;
-import com.alura.estacionamento.estrutura.Cliente;
 import com.alura.estacionamento.estrutura.Ticket;
 
 public class TicketDto {
 	
 		private Long id;
-		private Cliente cliente;
 		private Carro carro;
 		private LocalDateTime horarioEntrada;
 		
 		public TicketDto(Ticket ticket) {
 			this.id = ticket.getId();
 			this.carro = ticket.getCarro();
-			this.cliente = ticket.getCliente();
 			this.horarioEntrada = ticket.getHorarioEntrada();
 		}
 
@@ -31,17 +28,6 @@ public class TicketDto {
 		public void setId(Long id) {
 			this.id = id;
 		}
-
-
-		public Cliente getCliente() {
-			return cliente;
-		}
-
-
-		public void setCliente(Cliente cliente) {
-			this.cliente = cliente;
-		}
-
 
 		public Carro getCarro() {
 			return carro;

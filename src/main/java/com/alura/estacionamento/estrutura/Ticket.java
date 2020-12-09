@@ -10,7 +10,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.alura.estacionamento.estrutura.interna.StatusTicket;
@@ -23,8 +22,6 @@ public class Ticket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long Id;
-	@OneToOne
-	private Cliente cliente;
 	@NotNull
 	@ManyToOne
 	private Carro carro;
@@ -41,13 +38,11 @@ public class Ticket {
 
 	public Ticket(Ticket ticket) {
 		this.carro = ticket.getCarro();
-		this.cliente = ticket.getCliente();
 		this.valor = BigDecimal.valueOf(0);
 	}
 	
-	public Ticket(Cliente cliente, Carro carro) {
+	public Ticket(Carro carro) {
 		super();
-		this.cliente = cliente;
 		this.carro = carro;
 		this.valor = BigDecimal.valueOf(0);
 	}
@@ -98,14 +93,6 @@ public class Ticket {
 
 	public void setStatus(StatusTicket status) {
 		this.status = status;
-	}
-
-	public Cliente getCliente() {
-		return cliente;
-	}
-
-	public void setCliente(Cliente cliente) {
-		this.cliente = cliente;
 	}
 
 }
