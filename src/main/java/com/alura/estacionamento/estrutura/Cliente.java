@@ -1,12 +1,6 @@
 package com.alura.estacionamento.estrutura;
 
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import com.alura.estacionamento.estrutura.interna.Endereco;
 import com.sun.istack.NotNull;
@@ -26,6 +20,16 @@ public class Cliente {
 	@NotNull
 	@OneToOne
 	private Endereco endereco;
+
+	public Cliente() {
+	}
+
+	public Cliente(String nome, String cpf, String telefone, Endereco endereco) {
+		this.nome = nome;
+		this.cpf = cpf;
+		this.telefone = telefone;
+		this.endereco = endereco;
+	}
 
 	public Long getClienteId() {
 		return Id;

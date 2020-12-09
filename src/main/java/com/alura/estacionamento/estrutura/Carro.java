@@ -26,6 +26,16 @@ public class Carro {
 	@ManyToOne
 	private Cliente cliente;
 
+	public Carro() {
+	}
+
+	public Carro(String placa, String marca, Modelo modelo, Cliente cliente) {
+		this.placa = placa;
+		this.marca = marca;
+		this.modelo = modelo;
+		this.cliente = cliente;
+	}
+
 	public Long getId() {
 		return Id;
 	}

@@ -23,19 +23,34 @@ public class Ticket {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long Id;
+	@OneToOne
+	private Cliente cliente;
 	@NotNull
 	@ManyToOne
 	private Carro carro;
 	private BigDecimal valor;
 	@NotNull
-	private LocalDateTime horarioEntrada=LocalDateTime.now();
+	private LocalDateTime horarioEntrada = LocalDateTime.now();
 	private LocalDateTime horarioSaida;
-	@NotNull
-	@OneToOne
-	private Estacionamento filial;
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	private StatusTicket status = StatusTicket.ABERTO;
+
+	public Ticket() {
+	}
+
+	public Ticket(Ticket ticket) {
+		this.carro = ticket.getCarro();
+		this.cliente = ticket.getCliente();
+		this.valor = BigDecimal.valueOf(0);
+	}
+	
+	public Ticket(Cliente cliente, Carro carro) {
+		super();
+		this.cliente = cliente;
+		this.carro = carro;
+		this.valor = BigDecimal.valueOf(0);
+	}
 
 	public Long getId() {
 		return Id;
@@ -77,20 +92,20 @@ public class Ticket {
 		this.horarioSaida = horarioSaida;
 	}
 
-	public Estacionamento getFilial() {
-		return filial;
-	}
-
-	public void setFilial(Estacionamento filial) {
-		this.filial = filial;
-	}
-
 	public StatusTicket getStatus() {
 		return status;
 	}
 
 	public void setStatus(StatusTicket status) {
 		this.status = status;
+	}
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 
 }
