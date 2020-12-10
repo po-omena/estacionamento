@@ -17,8 +17,9 @@ import com.sun.istack.NotNull;
 public class Carro {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long Id;
+	
 	@NotNull
 	private String placa;
 	private String marca;

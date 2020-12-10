@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.alura.estacionamento.estrutura.Carro;
 
 public interface CarroRepository extends JpaRepository<Carro, Long>{
+
+	Carro findByPlaca(String placa);
 }
