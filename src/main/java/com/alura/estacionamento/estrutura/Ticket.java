@@ -1,10 +1,13 @@
 package com.alura.estacionamento.estrutura;
 
-import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -16,7 +19,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.Formula;
 import com.alura.estacionamento.estrutura.interna.StatusTicket;
 import com.sun.istack.NotNull;
 
@@ -29,15 +31,15 @@ public class Ticket {
 	private Long Id;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.MERGE })
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Carro carro;
 
 	@NotNull
 	private LocalDateTime horarioEntrada = LocalDateTime.now();
 	private LocalDateTime horarioSaida;
 
-	@Formula("TIMEDIFF(NOW(),horario_entrada)")
-	private Timestamp timeDiff;
+//	@Formula("TIMEDIFF(NOW(),horario_entrada)")
+//	private String timeDiff;
 
 	private Double valor;
 
@@ -67,13 +69,13 @@ public class Ticket {
 		Id = id;
 	}
 
-	public Timestamp getTimeDiff() {
-		return timeDiff;
-	}
-
-	public void setTimeDiff(Timestamp timeDiff) {
-		this.timeDiff = timeDiff;
-	}
+//	public String getTimeDiff() {
+//		return timeDiff;
+//	}
+//
+//	public void setTimeDiff(String timeDiff) {
+//		this.timeDiff = timeDiff;
+//	}
 
 	public Carro getCarro() {
 		return carro;
@@ -115,34 +117,9 @@ public class Ticket {
 		this.status = status;
 	}
 
-	/*
-	 * public BigDecimal calculaValor() {
-	 * 
-	 * return BigDecimal.valueOf(1); }
-	 */
-	public int calculaValorAtual() {
-
-		@SuppressWarnings("deprecation")
-		int horaParcial = timeDiff.getMinutes();
-		@SuppressWarnings("deprecation")
-		int horas = timeDiff.getHours();
-
-		if (horaParcial > 0) {
-			horas += 1;
-		}
-
-		return horas;
-	}
-
-	
-	public double fechaTicket() {
+	public double calculaValorAtual() {
 		
-		setHorarioSaida(LocalDateTime.now());
-		
-		Instant entrada = this.horarioEntrada.atZone(ZoneId.of("UTC-3")).toInstant();
-		Instant saida = this.horarioSaida.atZone(ZoneId.of("UTC-3")).toInstant();
-
-		Duration timeElapsed = Duration.between(entrada, saida);
+		Duration timeElapsed = getTimeDiff();
 
 		double horaParcial = timeElapsed.toMinutes();
 		double horas = timeElapsed.toHours();
@@ -152,11 +129,96 @@ public class Ticket {
 			horas += 1;
 		}
 		
-		this.setStatus(StatusTicket.FECHADO);
-		this.setValor(5.0+(2.0*horas));
+		if(horas==0) {
+			return 5;
+		}
 		
-		System.out.println("O valor final é de: " + valor);
-		return horas;
+		Double valor = (5.0+(2.0*(horas-1)));
+		
+		return valor;
 	}
 
+	private Duration getTimeDiff() {
+		
+		Instant entrada = this.horarioEntrada.atZone(ZoneId.of("UTC-3")).toInstant();
+		Instant saida = null;
+		
+		if(this.horarioSaida==null) {
+			saida = Instant.now();
+		} else {
+			saida = this.horarioSaida.atZone(ZoneId.of("UTC-3")).toInstant();
+		}
+
+		Duration timeElapsed = Duration.between(entrada, saida);
+		return timeElapsed;
+	}
+
+	
+	public double fechaTicket() {
+		
+		setHorarioSaida(LocalDateTime.now());
+		setStatus(StatusTicket.FECHADO);
+		this.setValor(this.calculaValorAtual());
+		
+		System.out.println("O valor final é de: " + valor);
+		return this.getValor();
+	}
+	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List imprimeTicket() {
+		
+		List lista = new ArrayList();
+		lista.add(String.format("Ticket ID: %d", this.getId()));
+		lista.add(String.format("Status: %s", getStatus()));
+		
+		lista.add(String.format("Placa: %s",this.getCarro().getPlaca()));
+		lista.add(String.format("Marca: %s",this.getCarro().getMarca()));
+		lista.add(String.format("Ano: %s",this.getCarro().getModelo().getModeloAno()));
+		lista.add(String.format("Modelo: %s",(this.getCarro().getModelo().getModeloNome())));
+		lista.add(String.format("Tipo: %s",this.getCarro().getModelo().getModeloVersao()));
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
+		
+		lista.add(String.format("Entrada: %s", this.getHorarioEntrada().truncatedTo(ChronoUnit.SECONDS).format(dtf)));
+		
+		if(this.getHorarioSaida()!=null) {
+			lista.add(String.format("Saída: %s", this.getHorarioSaida().truncatedTo(ChronoUnit.SECONDS).format(dtf)));
+		}else {
+			lista.add("Saída: NÃO REGISTRADA");
+		}
+		
+		lista.add(String.format("Tempo de Permanencia: %dH %dM",this.getTimeDiff().toHours(),this.getTimeDiff().minusHours(this.getTimeDiff().toHours()).toMinutes()));
+				
+		lista.add(String.format("Valor: %s", this.getValor()));
+		
+	return lista;
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public List imprimeTicketCliente() {
+		
+		List lista = new ArrayList();
+		
+		lista.add("O valor para a primeira hora é: R$ 5,00");		
+		lista.add("O valor para as demais hora é: R$ 2,00");
+		lista.add("----------------------------------------");
+		
+		lista.add(String.format("Ticket ID: %d", this.getId()));
+		lista.add(String.format("Status: %s", getStatus()));
+		
+		lista.add(String.format("Placa: %s",this.getCarro().getPlaca()));
+		lista.add(String.format("Marca: %s",this.getCarro().getMarca()));
+		lista.add(String.format("Ano: %s",this.getCarro().getModelo().getModeloAno()));
+		lista.add(String.format("Modelo: %s",(this.getCarro().getModelo().getModeloNome())));
+		lista.add(String.format("Tipo: %s",this.getCarro().getModelo().getModeloVersao()));
+		
+		DateTimeFormatter dtf = DateTimeFormatter.ISO_DATE_TIME;
+		
+		lista.add(String.format("Entrada: %s", this.getHorarioEntrada().truncatedTo(ChronoUnit.SECONDS).format(dtf)));
+		lista.add("----------------------------------------");
+		lista.add("Tenha um bom dia!");	
+		
+		return lista;
+	}
 }

@@ -24,8 +24,9 @@ public class Cliente {
 	@NotNull
 	private String cpf;
 	private String telefone;
+//	
 	@NotNull
-	@OneToOne(cascade = {CascadeType.ALL})
+	@OneToOne(cascade = CascadeType.ALL)
 	private Endereco endereco;
 
 	public Cliente() {

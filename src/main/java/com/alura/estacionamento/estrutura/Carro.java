@@ -17,15 +17,15 @@ import com.sun.istack.NotNull;
 public class Carro {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY) 
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long Id;
 	
 	@NotNull
 	private String placa;
 	private String marca;
-	@OneToOne(cascade = {CascadeType.ALL})
+	@OneToOne(cascade = CascadeType.ALL)
 	private Modelo modelo;
-	@ManyToOne(cascade = {CascadeType.ALL})
+	@ManyToOne(cascade = CascadeType.ALL)
 	private Cliente cliente;
 
 	public Carro() {
