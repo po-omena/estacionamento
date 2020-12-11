@@ -16,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.alura.estacionamento.controller.form.TicketForm;
+import com.alura.estacionamento.controller.manager.TicketManager;
 import com.alura.estacionamento.estrutura.Ticket;
-import com.alura.estacionamento.estrutura.interna.StatusTicket;
 import com.alura.estacionamento.repository.TicketRepository;
 
 @Transactional
@@ -28,8 +28,7 @@ public class TicketController {
 	@Autowired
 	private TicketRepository ticketRepository;
 
-//	@Autowired
-//	private CarroRepository carroRepository;
+	TicketManager tm = new TicketManager();
 
 	@SuppressWarnings("unchecked")
 	@GetMapping
@@ -38,11 +37,11 @@ public class TicketController {
 		List<Ticket> tickets = ticketRepository.findAll();
 
 		for (Ticket ticket : tickets) {
-			ticket.setValor(ticket.calculaValorAtual());	
+			ticket.setValor(ticket.calculaValorAtual());
 		}
-		
-		tickets = estruturaTickets(tickets);
-		
+		tickets = tm.estruturaTickets(tickets);
+//		tickets = estruturaTickets(tickets);
+
 		return tickets;
 	}
 
@@ -62,9 +61,9 @@ public class TicketController {
 	public List<Ticket> pageAbertos() {
 
 		List<Ticket> tickets = ticketRepository.findAll();
-		tickets = getAbertos(tickets);
+		tickets = tm.getAbertos(tickets, ticketRepository);
 
-		tickets = estruturaTickets(tickets);
+		tickets = tm.estruturaTickets(tickets);
 
 		return tickets;
 	}
@@ -75,8 +74,8 @@ public class TicketController {
 	public List<Ticket> pageTicketAbertoPorPlaca(@PathVariable String placa) {
 
 		List<Ticket> abertos = ticketRepository.findByCarroPlaca(placa);
-		abertos = getAbertos(abertos);
-		abertos = estruturaTickets(abertos);
+		abertos = tm.getAbertos(abertos, ticketRepository);
+		abertos = tm.estruturaTickets(abertos);
 
 		return abertos;
 	}
@@ -92,8 +91,8 @@ public class TicketController {
 			ticket.setValor(ticket.calculaValorAtual());
 		}
 
-		tickets = estruturaTickets(tickets);
-		
+		tickets = tm.estruturaTickets(tickets);
+
 		return tickets;
 	}
 
@@ -119,58 +118,36 @@ public class TicketController {
 		}
 
 		List retorno = new ArrayList<>();
-		retorno.add("Existem mais de 1 tickets abertos, por favor fechar diretamente pelo Ticket ID.");
+		retorno.add("Existe mais de 1 ticket aberto, por favor fechar diretamente pelo Ticket ID.");
+		tickets = tm.estruturaTickets(tickets);
 		retorno.add(tickets);
 
 		return retorno;
 	}
-
-	
-//Métodos úteis
-	
-	//Estrutura Tickets para impressão
 	
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private List estruturaTickets(List<Ticket> tickets) {
-
-		List ticketsEstruturados = new ArrayList<>();
-		for (Ticket ticket : tickets) {
-			ticketsEstruturados.add(ticket.imprimeTicket());
-		}
-		return ticketsEstruturados;
-	}
-	
-//	Retorna os tickets abertos de todo o estacionamento
-
-	@SuppressWarnings("rawtypes")
-	public List getAbertos(List<Ticket> tickets) {
-
-		if (tickets.isEmpty()) {
-			tickets = ticketRepository.findAll();
-		}
-
-		List<Ticket> abertos = new ArrayList<Ticket>();
-		StatusTicket abertoEnum = StatusTicket.ABERTO;
-
-		for (Ticket ticket : tickets) {
-			if (ticket.getStatus().equals(abertoEnum)) {
-
-				ticket.setValor(ticket.calculaValorAtual());
-				abertos.add(ticket);
-			}
-		}
-		System.out.println("Existem atualmente " + abertos.size() + " tickets abertos no estacionamento.");
-		return abertos;
+	@GetMapping("/fecha/id/{id}")
+	public List fechaPorPlaca(@PathVariable Long id) {
+		
+		Ticket ticket = ticketRepository.findById(id).get();	
+		ticket.fechaTicket();
+		ticketRepository.save(ticket);
+		
+		List retorno = ticket.imprimeTicket();    
+		retorno.add("-----------------------------");
+		retorno.add("O ticket foi fechado.");
+		return retorno;
 	}
 
-	//	Retorna os tickets abertos por placa
-	
+
+	// Retorna os tickets abertos por placa
+
 	@SuppressWarnings("unchecked")
 	public List<Ticket> getTicketAberto(@PathVariable String placa) {
 
 		List<Ticket> abertos = ticketRepository.findByCarroPlaca(placa);
-		abertos = getAbertos(abertos);
-
+		abertos = tm.getAbertos(abertos, ticketRepository);
+		
 		return abertos;
 	}
 }
