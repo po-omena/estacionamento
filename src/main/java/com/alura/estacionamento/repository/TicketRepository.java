@@ -12,4 +12,6 @@ public interface TicketRepository extends JpaRepository<Ticket, Long>{
 	List<Ticket> findByCarroPlaca(String placa);
 
 	List<Ticket> findByStatus(StatusTicket status);
+
+	List<Ticket> findByCarroPlacaAndStatus(String placa, StatusTicket status);
 }

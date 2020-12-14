@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.alura.estacionamento.controller.manager.TicketManager;
 import com.alura.estacionamento.estrutura.Ticket;
+import com.alura.estacionamento.estrutura.interna.StatusTicket;
 import com.alura.estacionamento.repository.TicketRepository;
 
 @Transactional
@@ -97,8 +98,7 @@ public class CaixaController {
 	@GetMapping("/veiculo/{placa}")
 	public List caixaPlaca(@PathVariable String placa) {
 		
-		List<Ticket> porPlaca = ticketRepository.findByCarroPlaca(placa);
-		List<Ticket> tickets = tm.getFechados(porPlaca, ticketRepository);
+		List<Ticket> tickets = ticketRepository.findByCarroPlacaAndStatus(placa, StatusTicket.FECHADO);
 		
 		Double caixa = tm.getCaixa(tickets);
 		int tamanho = tickets.size();

@@ -1,6 +1,9 @@
 package com.alura.estacionamento.test;
 
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -25,7 +28,7 @@ import com.alura.estacionamento.repository.TicketRepository;
 @RunWith(SpringRunner.class)
 @AutoConfigureTestDatabase(replace=Replace.NONE)
 
-class TestaFechamento {
+class TestaRegistro {
 
 	@Autowired
 	private TestEntityManager em;
@@ -34,24 +37,26 @@ class TestaFechamento {
 	private TicketRepository ticketRepository;
 	
 	@Test
-	public void testFechaticket() {
+	public void testRegistraTicket() {
 		
-		Endereco endereco1 = new Endereco("SANTA MONICA","38412-333","UBERLANDIA","CASA","456","RUA TESTE Nº1");
-		Cliente cliente1 = new Cliente("77824753093","ROGERIO SANTOS","(44) 67076-4726", endereco1);
-		Modelo modelo1 = new Modelo("GOL", 2014,versoes.HATCH);
-		Carro carro1 = new Carro("MARCA 1","XKJ-9482",cliente1,modelo1);
-		Ticket ticket = new Ticket(LocalDateTime.parse("2020-10-09T13:15:39"),LocalDateTime.parse("2020-10-09T14:15:39"),StatusTicket.FECHADO,5.0,carro1);
-		
+		Ticket ticket = criaTicket().get(0);
 		Ticket savedTicket = em.persist(ticket);
 		Ticket fromDB = ticketRepository.getOne(savedTicket.getId());
-		System.out.println(ticket.imprimeTicket());
-		Assert.assertEquals(fromDB, savedTicket);
 		
-		ticket.fechaTicket();
-		savedTicket = em.persist(ticket);
-		fromDB = ticketRepository.getOne(savedTicket.getId());
+		Assert.assertEquals(fromDB, savedTicket);
+	}
+	
+	public List<Ticket> criaTicket() {
+		
+		Modelo modelo1 = new Modelo("GOL", 2014,versoes.HATCH);		
+		Endereco endereco1 = new Endereco("SANTA MONICA","38412-333","UBERLANDIA","CASA","456","RUA TESTE Nº1");
+		Cliente cliente1 = new Cliente("77824753093","ROGERIO SANTOS","(44) 67076-4726", endereco1);
+		Carro carro1 = new Carro("MARCA 1","XKJ-9482",cliente1,modelo1);
+		Ticket ticket1 = new Ticket(LocalDateTime.parse("2020-10-09T13:15:39"),LocalDateTime.parse("2020-10-09T14:15:39"),StatusTicket.FECHADO,5.0,carro1);
 
+		List<Ticket> tickets = new ArrayList<Ticket>();
+		tickets.add(ticket1);
 		
-		Assert.assertEquals(fromDB, savedTicket);
+		return tickets;
 	}
 }

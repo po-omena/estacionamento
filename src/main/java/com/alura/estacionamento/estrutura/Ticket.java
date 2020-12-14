@@ -61,6 +61,16 @@ public class Ticket {
 		this.valor = 0.0;
 	}
 
+	public Ticket(LocalDateTime horarioEntrada, LocalDateTime horarioSaida, 
+				  StatusTicket status, Double valor, Carro carro) {
+		super();
+		this.carro = carro;
+		this.horarioEntrada = horarioEntrada;
+		this.horarioSaida = horarioSaida;
+		this.valor = valor;
+		this.status = status;
+	}
+
 	public Long getId() {
 		return Id;
 	}
@@ -119,6 +129,10 @@ public class Ticket {
 
 	public double calculaValorAtual() {
 		
+		if(this.status==StatusTicket.FECHADO) {
+			return this.valor;
+		}
+		
 		Duration timeElapsed = getTimeDiff();
 
 		double horaParcial = timeElapsed.toMinutes();
@@ -156,11 +170,16 @@ public class Ticket {
 	
 	public double fechaTicket() {
 		
+		if(status == StatusTicket.FECHADO) {
+			System.out.println("O ticket está fechado.");
+			System.out.println(String.format("Valor Final: R$%.2f",this.getValor()));
+			return this.getValor();
+		}
+		
 		setHorarioSaida(LocalDateTime.now());
 		setStatus(StatusTicket.FECHADO);
 		this.setValor(this.calculaValorAtual());
 		
-		System.out.println("O valor final é de: " + valor);
 		return this.getValor();
 	}
 	

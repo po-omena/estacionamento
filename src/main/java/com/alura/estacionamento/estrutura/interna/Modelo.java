@@ -20,6 +20,18 @@ public class Modelo {
 	private int modeloAno;
 	@Enumerated(EnumType.STRING)
 	private versoes modeloVersao;
+	
+	
+
+	public Modelo() {
+	}
+
+	public Modelo(String modeloNome, int modeloAno, versoes modeloVersao) {
+		super();
+		this.modeloNome = modeloNome;
+		this.modeloAno = modeloAno;
+		this.modeloVersao = modeloVersao;
+	}
 
 	public String getModeloNome() {
 		return modeloNome;

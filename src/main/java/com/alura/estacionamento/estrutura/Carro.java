@@ -31,7 +31,7 @@ public class Carro {
 	public Carro() {
 	}
 
-	public Carro(String placa, String marca, Modelo modelo, Cliente cliente) {
+	public Carro(String marca, String placa, Cliente cliente, Modelo modelo) {
 		this.placa = placa;
 		this.marca = marca;
 		this.modelo = modelo;

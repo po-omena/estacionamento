@@ -32,7 +32,7 @@ public class Cliente {
 	public Cliente() {
 	}
 
-	public Cliente(String nome, String cpf, String telefone, Endereco endereco) {
+	public Cliente(String cpf, String nome, String telefone, Endereco endereco) {
 		this.nome = nome;
 		this.cpf = cpf;
 		this.telefone = telefone;
