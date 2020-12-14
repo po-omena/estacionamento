@@ -38,9 +38,6 @@ public class Ticket {
 	private LocalDateTime horarioEntrada = LocalDateTime.now();
 	private LocalDateTime horarioSaida;
 
-//	@Formula("TIMEDIFF(NOW(),horario_entrada)")
-//	private String timeDiff;
-
 	private Double valor;
 
 	@NotNull

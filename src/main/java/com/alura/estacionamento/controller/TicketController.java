@@ -4,10 +4,15 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +36,10 @@ public class TicketController {
 	private TicketRepository ticketRepository;
 
 	TicketManager tm = new TicketManager();
+	
+	
+	@PersistenceContext
+	private EntityManager em;
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping
@@ -56,7 +65,12 @@ public class TicketController {
 	public ResponseEntity<List> criaTicket(@RequestBody TicketForm form, UriComponentsBuilder uriBuilder) {
 
 		Ticket ticket = form.converter();
-		ticketRepository.save(ticket);
+		if(ticket.getCarro().getId()!=null) {
+			em.merge(ticket);		
+		}
+		else {
+			ticketRepository.save(ticket);
+		}
 
 		URI uri = uriBuilder.path("/tickets/{id}").buildAndExpand(ticket.getId()).toUri();
 		return ResponseEntity.created(uri).body(ticket.imprimeTicketCliente());
@@ -227,4 +241,17 @@ public class TicketController {
 		
 		return ticketsEstruturados;
 	}
+	
+	@DeleteMapping("/{id}")
+	@Transactional
+	public ResponseEntity<?> remover(@PathVariable Long id) {
+		Optional<Ticket> optional = ticketRepository.findById(id);
+		if (optional.isPresent()) {
+			ticketRepository.deleteById(id);
+			return ResponseEntity.ok().build();
+		}
+		
+	return ResponseEntity.notFound().build();
+	}
+	
 }

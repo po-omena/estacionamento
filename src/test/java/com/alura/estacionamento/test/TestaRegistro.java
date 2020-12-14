@@ -59,4 +59,14 @@ class TestaRegistro {
 		
 		return tickets;
 	}
+	
+//	@Test
+//	public void testDeleteTicket() {
+//
+//		Long id = 1L;
+//		ticketRepository.deleteById(id);
+//		Assert.assertNull(ticketRepository.findById(1).get);
+//		
+//	}
+
 }
