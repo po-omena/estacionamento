@@ -31,6 +31,16 @@ public class Endereco {
 		this.complemento = complemento;
 	}
 
+	
+	
+	public Long getId() {
+		return Id;
+	}
+
+	public void setId(Long id) {
+		Id = id;
+	}
+
 	public String getCep() {
 		return cep;
 	}

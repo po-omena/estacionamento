@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table (name="Modelo")
+@Table(name = "Modelo")
 public class Modelo {
 
 	@Id
@@ -20,8 +20,6 @@ public class Modelo {
 	private int modeloAno;
 	@Enumerated(EnumType.STRING)
 	private versoes modeloVersao;
-	
-	
 
 	public Modelo() {
 	}
@@ -31,6 +29,14 @@ public class Modelo {
 		this.modeloNome = modeloNome;
 		this.modeloAno = modeloAno;
 		this.modeloVersao = modeloVersao;
+	}
+
+	public Long getId() {
+		return Id;
+	}
+
+	public void setId(Long id) {
+		Id = id;
 	}
 
 	public String getModeloNome() {

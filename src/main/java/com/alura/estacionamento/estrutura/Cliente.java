@@ -1,6 +1,5 @@
 package com.alura.estacionamento.estrutura;
 
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -37,6 +36,14 @@ public class Cliente {
 		this.cpf = cpf;
 		this.telefone = telefone;
 		this.endereco = endereco;
+	}
+
+	public Long getId() {
+		return Id;
+	}
+
+	public void setId(Long id) {
+		Id = id;
 	}
 
 	public Long getClienteId() {

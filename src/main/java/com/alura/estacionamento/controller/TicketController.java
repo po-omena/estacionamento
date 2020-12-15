@@ -25,6 +25,10 @@ import com.alura.estacionamento.controller.form.TicketForm;
 import com.alura.estacionamento.controller.manager.TicketManager;
 import com.alura.estacionamento.estrutura.Ticket;
 import com.alura.estacionamento.estrutura.interna.StatusTicket;
+import com.alura.estacionamento.repository.CarroRepository;
+import com.alura.estacionamento.repository.ClienteRepository;
+import com.alura.estacionamento.repository.EnderecoRepository;
+import com.alura.estacionamento.repository.ModeloRepository;
 import com.alura.estacionamento.repository.TicketRepository;
 
 @Transactional
@@ -34,10 +38,17 @@ public class TicketController {
 
 	@Autowired
 	private TicketRepository ticketRepository;
+	@Autowired
+	private CarroRepository carroRepository;
+	@Autowired
+	private EnderecoRepository enderecoRepository;
+	@Autowired
+	private ModeloRepository modeloRepository;
+	@Autowired
+	private ClienteRepository clienteRepository;
 
 	TicketManager tm = new TicketManager();
-	
-	
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -47,7 +58,7 @@ public class TicketController {
 
 		List<Ticket> tickets = ticketRepository.findAll();
 		int tamanho = tickets.size();
-		
+
 		for (Ticket ticket : tickets) {
 			ticket.setValor(ticket.calculaValorAtual());
 		}
@@ -65,10 +76,9 @@ public class TicketController {
 	public ResponseEntity<List> criaTicket(@RequestBody TicketForm form, UriComponentsBuilder uriBuilder) {
 
 		Ticket ticket = form.converter();
-		if(ticket.getCarro().getId()!=null) {
-			em.merge(ticket);		
-		}
-		else {
+		if (ticket.getCarro().getId() != null) {
+			em.merge(ticket);
+		} else {
 			ticketRepository.save(ticket);
 		}
 
@@ -84,21 +94,21 @@ public class TicketController {
 		int tamanho = tickets.size();
 
 		tickets = tm.estruturaTickets(tickets);
-		
+
 		List retorno = new ArrayList();
-		
-		if(tamanho == 0) {
+
+		if (tamanho == 0) {
 			retorno.add("Não existem tickets abertos");
 			return retorno;
 		}
-		
+
 		retorno.add(String.format("Existem %d tickets abertos", tamanho));
 		retorno.add("-------------------------");
 		retorno.add(tickets);
 
 		return retorno;
 	}
-	
+
 //	Retorna todos os tickets dado a placa de um veículo
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/{placa}")
@@ -106,21 +116,21 @@ public class TicketController {
 
 		List<Ticket> tickets = ticketRepository.findByCarroPlaca(placa);
 		int tamanho = tickets.size();
-		
+
 		for (Ticket ticket : tickets) {
 			ticket.setValor(ticket.calculaValorAtual());
 		}
 
 		tickets = tm.estruturaTickets(tickets);
-		
+
 		List retorno = new ArrayList();
-		
-		if(tamanho == 0) {
+
+		if (tamanho == 0) {
 			retorno.add(String.format("Não existem tickets registrados para a placa %s", placa));
 			return retorno;
 		}
-		
-		retorno.add(String.format("Existem %d tickets registrados para a placa %s", tamanho,placa));
+
+		retorno.add(String.format("Existem %d tickets registrados para a placa %s", tamanho, placa));
 		retorno.add("---------------------------------------------------");
 		retorno.add(tickets);
 
@@ -133,19 +143,19 @@ public class TicketController {
 	public List<Ticket> pageTicketAbertoPorPlaca(@PathVariable String placa) {
 
 		List<Ticket> abertos = ticketRepository.findByCarroPlacaAndStatus(placa, StatusTicket.ABERTO);
-		
+
 		int tamanho = abertos.size();
-		
+
 		abertos = tm.estruturaTickets(abertos);
-		
+
 		List retorno = new ArrayList();
-		
-		if(tamanho == 0) {
+
+		if (tamanho == 0) {
 			retorno.add(String.format("Não existem tickets abertos registrados para a placa %s", placa));
 			return retorno;
 		}
-		
-		retorno.add(String.format("Existe(m) %d ticket(s) aberto(s) registrado(s) para a placa %s", tamanho,placa));
+
+		retorno.add(String.format("Existe(m) %d ticket(s) aberto(s) registrado(s) para a placa %s", tamanho, placa));
 		retorno.add("-------------------------------------------------------------------");
 		retorno.add(abertos);
 
@@ -156,37 +166,37 @@ public class TicketController {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/fecha/{placa}")
 	public List fechaPorPlaca(@PathVariable String placa) {
-		
-		List<Ticket> abertos = ticketRepository.findByCarroPlacaAndStatus(placa,StatusTicket.ABERTO);
+
+		List<Ticket> abertos = ticketRepository.findByCarroPlacaAndStatus(placa, StatusTicket.ABERTO);
 		List retorno = new ArrayList();
-				
+
 		if (abertos.size() == 1) {
 
 			Ticket ultimoTicket = abertos.get(abertos.size() - 1);
 			ultimoTicket.fechaTicket();
 			ticketRepository.save(ultimoTicket);
-			
+
 			retorno.add("O ticket foi fechado com sucesso: ");
 			retorno.add("-------------TICKET--------------");
 			retorno.add(ultimoTicket.imprimeTicket());
 			retorno.add("-------------TICKET--------------");
-			
+
 			return retorno;
 		} else if (abertos.size() > 1) {
-			
+
 			retorno.add("Existe mais de 1 ticket aberto, por favor fechar diretamente pelo Ticket ID.");
 			abertos = tm.estruturaTickets(abertos);
 			retorno.add(abertos);
 
 			return retorno;
 		}
-		
+
 		List lista = new ArrayList<>();
 		lista.add("Não existem tickets abertos registrados nesta placa.");
 
 		return lista;
 	}
-	
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@GetMapping("/fecha/id/{id}")
 	public List fechaPorPlaca(@PathVariable Long id) {
@@ -197,61 +207,65 @@ public class TicketController {
 		try {
 			ticket = ticketRepository.findById(id).get();
 		} catch (NoSuchElementException e) {
-			
+
 			List erro = new ArrayList();
 			erro.add("Erro na operação:");
 			erro.add("Não foi encontrado ticket com este id");
 			return erro;
 		}
-		
-		if(ticket.getStatus()==StatusTicket.FECHADO) {
+
+		if (ticket.getStatus() == StatusTicket.FECHADO) {
 			retorno.add("Erro na operação:");
 			retorno.add("O ticket ja está fechado");
 			retorno.add("-------------TICKET--------------");
 			retorno.add(ticket.imprimeTicket());
 			retorno.add("-------------TICKET--------------");
-			
+
 			return retorno;
 		}
-		
+
 		ticket.fechaTicket();
 		ticketRepository.save(ticket);
-				
+
 		retorno.add("O ticket foi fechado com sucesso: ");
 		retorno.add("-------------TICKET--------------");
 		retorno.add(ticket.imprimeTicket());
 		retorno.add("-------------TICKET--------------");
-		
+
 		return retorno;
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@GetMapping("/populaDB")
-	public List criaTicket() {
-		
+	public List criaTickets() {
+
 		List<Ticket> tickets = tm.criaTickets();
 		List ticketsEstruturados = new ArrayList<>();
-		
+
 		ticketsEstruturados.add("Para fins de testes foram adicionados os seguintes tickets no banco de dados: ");
-		
+
 		for (Ticket ticket : tickets) {
 			ticketRepository.save(ticket);
 			ticketsEstruturados.add(ticket.imprimeTicket());
 		}
-		
+
 		return ticketsEstruturados;
 	}
-	
-	@DeleteMapping("/{id}")
-	@Transactional
-	public ResponseEntity<?> remover(@PathVariable Long id) {
-		Optional<Ticket> optional = ticketRepository.findById(id);
-		if (optional.isPresent()) {
-			ticketRepository.deleteById(id);
-			return ResponseEntity.ok().build();
-		}
-		
-	return ResponseEntity.notFound().build();
-	}
-	
+
+//	@DeleteMapping("/{id}")
+//	@Transactional
+//	public ResponseEntity<?> remover(@PathVariable Long id) {
+//		Optional<Ticket> optional = ticketRepository.findById(id);
+//		if (optional.isPresent()) {
+//			enderecoRepository.deleteById(ticketRepository.getOne(id).getCarro().getCliente().getEndereco().getId());
+//			clienteRepository.deleteById(ticketRepository.getOne(id).getCarro().getCliente().getId());
+//			modeloRepository.deleteById(ticketRepository.getOne(id).getCarro().getModelo().getId());
+//			carroRepository.deleteById(ticketRepository.getOne(id).getCarro().getId());
+//			ticketRepository.deleteById(id);
+//			return ResponseEntity.ok().build();
+//		}
+//
+//		return ResponseEntity.notFound().build();
+//	}
+
 }

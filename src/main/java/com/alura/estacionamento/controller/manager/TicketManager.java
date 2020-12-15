@@ -105,12 +105,13 @@ public class TicketManager {
 		Carro carro4 = new Carro("MARCA 4","FPQ-4821",cliente4,modelo4);
 		Carro carro5 = new Carro("MARCA 5","NIV-3456",cliente5,modelo5);
 		
-		Ticket ticket1 = new Ticket(LocalDateTime.parse("2020-10-09T13:15:39"),LocalDateTime.parse("2020-10-09T14:15:39"),StatusTicket.FECHADO,5.0,carro1);
-		Ticket ticket2 = new Ticket(LocalDateTime.parse("2020-12-10T10:17:15"),null,StatusTicket.ABERTO,0.0,carro2);
-		Ticket ticket3 = new Ticket(LocalDateTime.parse("2020-12-10T10:50:14"),null,StatusTicket.ABERTO,0.0,carro3);
-		Ticket ticket4 = new Ticket(LocalDateTime.parse("2020-12-10T09:34:47"),null,StatusTicket.ABERTO,0.0,carro4);
-		Ticket ticket5 = new Ticket(LocalDateTime.parse("2020-11-15T09:43:24"),LocalDateTime.parse("2020-11-15T10:25:35"),StatusTicket.FECHADO,10.0,carro1);
-		Ticket ticket6 = new Ticket(LocalDateTime.parse("2020-12-09T07:48:16"),LocalDateTime.parse("2020-12-09T12:48:16"),StatusTicket.FECHADO,13.0,carro5);
+		Ticket ticket5 = new Ticket(LocalDateTime.parse("2020-11-15T09:43:24"),LocalDateTime.parse("2020-11-15T10:25:35"),StatusTicket.FECHADO,5.0,carro1);
+		Ticket ticket2 = new Ticket(LocalDateTime.parse("2020-12-15T10:17:15"),LocalDateTime.parse("2020-12-15T11:37:34"),StatusTicket.FECHADO,7.0,carro2);
+		Ticket ticket6 = new Ticket(LocalDateTime.parse("2020-12-08T07:48:16"),LocalDateTime.parse("2020-12-09T12:48:16"),StatusTicket.ABERTO,0.0,carro5);
+		Ticket ticket1 = new Ticket(LocalDateTime.parse("2020-12-14T13:15:39"),LocalDateTime.parse("2020-12-14T14:15:39"),StatusTicket.ABERTO,0.0,carro1);
+		Ticket ticket3 = new Ticket(LocalDateTime.parse("2020-12-15T10:50:14"),LocalDateTime.parse("2020-12-15T11:30:25"),StatusTicket.ABERTO,0.0,carro3);
+		Ticket ticket4 = new Ticket(LocalDateTime.parse("2020-12-15T09:34:47"),null,StatusTicket.ABERTO,0.0,carro4);
+		Ticket ticket7 = new Ticket(LocalDateTime.parse("2020-12-15T13:10:25"),LocalDateTime.parse("2020-12-15T14:15:18"),StatusTicket.ABERTO,0.0,carro1);
 		
 		List<Ticket> tickets = new ArrayList<Ticket>();
 		
@@ -120,6 +121,7 @@ public class TicketManager {
 		tickets.add(ticket4);
 		tickets.add(ticket5);
 		tickets.add(ticket6);
+		tickets.add(ticket7);
 		
 		return tickets;
 	}

@@ -173,9 +173,11 @@ public class Ticket {
 			return this.getValor();
 		}
 		
-		setHorarioSaida(LocalDateTime.now());
-		setStatus(StatusTicket.FECHADO);
+		if(this.horarioSaida==null) {
+			setHorarioSaida(LocalDateTime.now());
+		}
 		this.setValor(this.calculaValorAtual());
+		setStatus(StatusTicket.FECHADO);
 		
 		return this.getValor();
 	}
